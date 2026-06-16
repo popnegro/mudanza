@@ -1,28 +1,14 @@
-// 🚀 GUÍA COMPLETA: DESPLEGAR EN VERCEL (Frontend + API)
-
-// =============================
-// 1. ESTRUCTURA FINAL PROYECTO
-// =============================
-
-// /mudanzas-app/
-// ├── /pages
-// │   ├── index.js              ← ESTE COMPONENTE
-// │   └── /api
-// │       └── calcular.js       ← backend
-// ├── /components
-// ├── /public
-// ├── package.json
-// └── next.config.js
-
-
-// =============================
-// 2. COMPONENTE PRINCIPAL (YA LISTO)
-// =============================
-
 import { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card"; // Asegúrate de que sean named exports
+import { Button } from "@/components/ui/button";       // Asegúrate de que sea named export
 import { motion } from "framer-motion";
+
+// Debugging: Verifica si los componentes están cargando correctamente
+console.log("🔍 Verificación de Componentes UI:", { 
+  Card: typeof Card !== "undefined" ? "Cargado" : "UNDEFINED", 
+  CardContent: typeof CardContent !== "undefined" ? "Cargado" : "UNDEFINED", 
+  Button: typeof Button !== "undefined" ? "Cargado" : "UNDEFINED" 
+});
 
 export default function CotizadorMudanza() {
   const [step, setStep] = useState(1);
@@ -33,6 +19,11 @@ export default function CotizadorMudanza() {
   const [loading, setLoading] = useState(false);
 
   const calcularPrecio = async () => {
+    if (!origen || !destino) {
+      alert("Por favor, completa los campos de origen y destino");
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -122,52 +113,6 @@ export default function CotizadorMudanza() {
     </div>
   );
 }
-
-
-// =============================
-// 3. BACKEND (pages/api/calcular.js)
-// =============================
-
-export default function handler(req, res) {
-  const { tipo } = req.body;
-
-  let base = 15000;
-  if (tipo === "2 ambientes") base = 25000;
-  if (tipo === "3 ambientes") base = 35000;
-  if (tipo === "Casa grande") base = 50000;
-
-  const distancia = Math.floor(Math.random() * 20) + 5;
-
-  const opciones = [
-    { nombre: "Económico", precio: base + distancia * 800, tiempo: "24-48 hs" },
-    { nombre: "Express", precio: base + distancia * 1200, tiempo: "En el día" },
-    { nombre: "Premium", precio: base + distancia * 1600, tiempo: "Prioritario" }
-  ];
-
-  res.status(200).json({ opciones });
-}
-
-
-// =============================
-// 4. package.json
-// =============================
-
-{
-  "name": "mudanzas-app",
-  "version": "1.0.0",
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start"
-  },
-  "dependencies": {
-    "next": "latest",
-    "react": "latest",
-    "react-dom": "latest",
-    "framer-motion": "latest"
-  }
-}
-
 
 // =============================
 // 5. DEPLOY EN VERCEL
